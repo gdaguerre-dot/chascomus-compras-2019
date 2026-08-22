@@ -2,7 +2,7 @@
 
 **Auditoría de calidad de datos, análisis de compras públicas sobre el registro de órdenes de compra 2019.**
 
-> 🔒 **Nota de privacidad:** este repositorio es un ejercicio a partir de trabajo realizado. Los nombres de proveedores fueron reemplazados por códigos (`PROV-XXX`). Las proporciones, montos, fechas y estructura de la red son reales — solo se anonimizaron las identidades.
+> 🔒 **Nota de privacidad:** este repositorio es un ejercicio a partir de trabajo realizado. Los nombres de proveedores fueron reemplazados por códigos (`PROV-XXX`) para preservar su anonimato. Las secretarías se muestran con su nombre real (son dependencias del organigrama municipal, no datos personales). Las proporciones, montos, fechas y estructura de la red son reales.
 
 🔗 **[Ver el dashboard interactivo](https://gdaguerre-dot.github.io/Chascomus-compras-2019/)**
 
@@ -32,10 +32,13 @@ Ver la metodología completa en [`docs/index.html`](docs/index.html) (sección "
 | Dato original | Tratamiento |
 |---|---|
 | Nombre/razón social de proveedor | Reemplazado por código `PROV-001`…`PROV-616`, ordenados por gasto real descendente |
+| Nombre de secretaría | **Se muestra tal cual** (Servicios Públicos, Salud Pública, Desarrollo Social, Obras y Servicios Sanitarios, Planificación y Turismo, Seguridad Ciudadana, Gobierno, Hacienda, Intendente, H.C.D) — son dependencias del organigrama municipal, no información identificable de una persona |
 | Número de folio de orden real | Reemplazado por un ID sintético secuencial (`OC-00001`…), sin relación con el folio original |
 | Dependencia de detalle (nivel más fino que secretaría) | Descartada de los archivos públicos — no se usa en el dashboard ni en la red |
 
-El mapeo real → código se generó una sola vez y se usó de forma consistente en todos los archivos (CSV, dashboard y red), pero **no se publica** — queda excluido del repositorio (ver `.gitignore`). Esto es intencional: el objetivo es mostrar el proceso y la estructura, no permitir revincular los códigos con proveedores reales.
+El mapeo real → código de proveedores se generó una sola vez y se usó de forma consistente en todos los archivos (CSV, dashboard y red), pero **no se publica** — queda excluido del repositorio (ver `.gitignore`). Esto es intencional: el objetivo es mostrar el proceso y la estructura, no permitir revincular los códigos con proveedores reales.
+
+> **Nota de versión:** en una versión anterior de este repositorio las secretarías también estaban codificadas (`Secretaría A`–`J`). Se optó por revertir esa capa de anonimización porque una secretaría municipal es una unidad administrativa pública, no un dato personal, y mostrar su nombre real permite un análisis más rico (por ejemplo, cruzar esto con el organigrama o con el informe ARS original) sin comprometer la identidad de ningún proveedor.
 
 ## Qué contiene el repositorio
 
@@ -44,9 +47,9 @@ El mapeo real → código se generó una sola vez y se usó de forma consistente
 │   └── compras_2019_anonimizado.csv   # una fila por orden real, anonimizada (13.715 filas)
 ├── docs/
 │   ├── index.html                      # dashboard interactivo (GitHub Pages)
-│   └── fine_data.js                    # datos agregados anonimizados (secretaría × mes × proveedor)
+│   └── fine_data.js                    # datos agregados (secretaría real × mes × proveedor anonimizado)
 ├── assets/
-│   └── red_compras_2019.png            # red proveedor–secretaría, anonimizada
+│   └── red_compras_2019.png            # red proveedor–secretaría (proveedores anonimizados, secretarías con nombre real)
 ├── scripts/
 │   ├── clean_and_aggregate.py          # diagnóstico de calidad de datos (opera sobre el archivo fuente, no publicado)
 │   ├── anonymize.py                    # limpieza + anonimización + agregación reproducible
@@ -54,7 +57,7 @@ El mapeo real → código se generó una sola vez y se usó de forma consistente
 └── README.md
 ```
 
-**No se incluye el archivo fuente original** (tiene nombres reales de proveedores y secretarías). Los scripts que lo requieren (`clean_and_aggregate.py`, `anonymize.py`) están documentados igual, para mostrar el método, pero solo pueden correrse con el archivo original en un entorno local — no se publica ni se necesita para ver el dashboard.
+**No se incluye el archivo fuente original** (tiene nombres reales de proveedores). Los scripts que lo requieren (`clean_and_aggregate.py`, `anonymize.py`) están documentados igual, para mostrar el método, pero solo pueden correrse con el archivo original en un entorno local — no se publica ni se necesita para ver el dashboard.
 
 ## El dashboard
 
@@ -62,7 +65,7 @@ El mapeo real → código se generó una sola vez y se usó de forma consistente
 - **Filtro interactivo por secretaría**: al hacer clic en cualquier fila de la sección "Gasto por secretaría", todo el tablero (KPIs, gasto mensual, ranking de proveedores) se recalcula, calculado en el navegador a partir del set agregado — sin backend ni datos reales expuestos.
 - **Índice de concentración de proveedores (HHI)** por secretaría, con semáforo bajo / moderado / alto.
 - **Ranking de proveedores** por código, por monto real adjudicado.
-- **Red proveedor–secretaría** anonimizada, como puente con el informe ARS original.
+- **Red proveedor–secretaría** (proveedores anonimizados, secretarías con su nombre real), como puente con el informe ARS original.
 
 ### Índice de concentración (HHI)
 
@@ -74,7 +77,7 @@ Umbrales: <1.500 baja concentración, 1.500–2.500 moderada, >2.500 alta
 
 ## La red proveedor–secretaría
 
-`assets/red_compras_2019.png` reconstruye la red bimodal del informe original con un layout radial: las 10 secretarías se ubican en el anillo exterior; los 60 proveedores de mayor adjudicación real (por código) se agrupan cerca de su secretaría dominante, y se acercan al centro cuanto más secretarías distintas les compraron. El tamaño del nodo es proporcional al monto; el color, a la secretaría dominante del proveedor.
+`assets/red_compras_2019.png` reconstruye la red bimodal del informe original con un layout radial: las 10 secretarías (con su nombre real) se ubican en el anillo exterior; los 60 proveedores de mayor adjudicación real (identificados por código, para preservar su anonimato) se agrupan cerca de su secretaría dominante, y se acercan al centro cuanto más secretarías distintas les compraron. El tamaño del nodo es proporcional al monto; el color, a la secretaría dominante del proveedor.
 
 Se regenera con:
 
